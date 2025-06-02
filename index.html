@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>House Sorting Quiz</title>
+<style>
+  @font-face {
+    font-family: 'Bookman Old Style';
+    src: local('Bookman Old Style'), local('BookmanOldStyle'), serif;
+  }
+  body {
+    font-family: 'Bookman Old Style', serif;
+    background: #0b0b0b;
+    margin: 0;
+    padding: 0;
+    color: #e6d8a7;
+  }
+  .container {
+    max-width: 700px;
+    margin: 3rem auto 4rem;
+    background: #121212;
+    box-shadow: 0 0 30px #b29539cc;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid #b29539;
+  }
+  header {
+    background: linear-gradient(90deg, #b29539 0%, #d4ba5b 100%);
+    color: #0b0b0b;
+    padding: 1.5rem;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-shadow: 0 0 5px #fff4b8cc;
+  }
+  main {
+    padding: 2rem 3rem 3rem;
+  }
+  form {
+    display: none;
+  }
+  form.active {
+    display: block;
+  }
+  label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 700;
+    color: #e6d8a7;
+  }
+  input[type="text"],
+  input[type="email"],
+  input[type="date"],
+  select {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1.8px solid #b29539;
+    border-radius: 6px;
+    font-size: 1rem;
+    margin-bottom: 1.1rem;
+    background: #1b1b1b;
+    color: #e6d8a7;
+    transition: border-color 0.3s ease;
+  }
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="date"]:focus,
+  select:focus {
+    outline: none;
+    border-color: #f6df7a;
+    box-shadow: 0 0 7px #f6df7aaa;
+    background: #272727;
+  }
+  .questions-list {
+    margin-bottom: 1.5rem;
+  }
+  .question {
+    margin-bottom: 2rem;
+  }
+  .question h3 {
+    margin-bottom: 0.6rem;
+    font-weight: 700;
+    color: #d4ba5b;
+    text-shadow: 0 0 4px #b29539cc;
+  }
+  .answers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+  }
+  .answers label {
+    flex: 1 1 45%;
+    background: #1d1d1d;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+    user-select: none;
+    color: #e6d8a7;
+    box-shadow: inset 0 0 3px #3d320eaa;
+  }
+  .answers input[type="radio"] {
+    display: none;
+  }
+  .answers input[type="radio"]:checked + label {
+    border-color: #f6df7a;
+    background-color: #3e3415;
+    color: #fff7bb;
+    box-shadow: 0 0 10px #f6df7a99, inset 0 0 6px #f6df7aaa;
+  }
+  .buttons {
+    text-align: right;
+  }
+  button {
+    background: #b29539;
+    border: none;
+    padding: 0.75rem 1.6rem;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    color: #0b0b0b;
+    font-size: 1.15rem;
+    letter-spacing: 0.07em;
+    transition: background 0.3s ease, color 0.3s ease;
+    box-shadow: 0 0 6px #b29539cc;
+  }
+  button:hover:not(:disabled) {
+    background: #d4ba5b;
+    color: #0b0b0b;
+    box-shadow: 0 0 20px #d4ba5bcc;
+  }
+  button:disabled {
+    background: #555555aa;
+    border: none;
+    cursor: not-allowed;
+    color: #777;
+    box-shadow: none;
+  }
+  /* House specific result styles */
+  .result-container {
+    text-align: center;
+  }
+  .house-name {
+    font-size: 3rem;
+    font-weight: 900;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 10px #d4ba5bcc;
+    color: #f6df7a;
+  }
+  .house-desc {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    max-width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    color: #e6d8a7;
+    font-weight: 600;
+    text-shadow: 0 0 6px #b2953988;
+  }
+  /* Progress bar */
+  .progress-bar {
+    height: 12px;
+    border-radius: 20px;
+    background: #222222;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    border: 1px solid #b29539;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: #b29539;
+    transition: width 0.4s ease;
+    box-shadow: 0 0 10px #b29539cc;
+  }
+  /* Confirmation message for submission */
+  .submit-msg {
+    margin-top: 1rem;
+    font-size: 1rem;
+    color: #8ccb32; /* green */
+    font-weight: 700;
+    display: none;
+    text-shadow: 0 0 5px #8ccb32aa;
+  }
+  /* Error message */
+  .error-msg {
+    margin-bottom: 1rem;
+    color: #c04444; /* red */
+    font-weight: 700;
+  }
+  /* Hide restart button to prevent retake */
+  #restart-btn {
+    display: none;
+  }
+</style>
+</head>
+<body>
+<div class="container" role="main" aria-label="House Sorting Quiz">
+  <header>
+    Levisville Academy House Sorting Quiz
+  </header>
+  <p>Answer honestly. Your house will be determined by your values. Submit only once.</p>
+  <main>
+    <div id="progress-bar" class="progress-bar" aria-hidden="true">
+      <div class="progress-bar-fill"></div>
+    </div>
+
+    <!-- Step 1: User Information Form -->
+    <form id="form-step1" class="active" aria-label="User information form">
+      <label for="name">Full Name *</label>
+      <input id="name" name="name" type="text" placeholder="Your full name" required aria-required="true" />
+
+      <label for="email">Email Address *</label>
+      <input id="email" name="email" type="email" placeholder="your@example.com" required aria-required="true" />
+
+      <label for="date">Date *</label>
+      <input id="date" name="date" type="date" required aria-required="true" />
+
+      <div class="buttons">
+        <button type="submit" id="step1-next">Next</button>
+      </div>
+    </form>
+
+    <!-- Step 2: Questions Form -->
+    <form id="form-step2" aria-label="House sorting questions form">
+      <div class="questions-list" id="questions-list" aria-live="polite">
+        <!-- Questions injected by JS -->
+      </div>
+      <div class="buttons">
+        <button type="button" id="step2-prev">Back</button>
+        <button type="submit" id="step2-next" disabled>Submit</button>
+      </div>
+    </form>
+
+    <!-- Step 3: Result Display -->
+    <form id="form-step3" aria-label="House sorting result" novalidate>
+      <div class="result-container" id="result-container" tabindex="0" aria-live="polite" aria-atomic="true">
+        <!-- Result displayed by JS -->
+      </div>
+
+      <div class="buttons">
+        <!-- Restart button hidden to prevent retake -->
+        <button type="button" id="restart-btn" aria-hidden="true" tabindex="-1">Start Over</button>
+      </div>
+      <p class="submit-msg" id="submit-msg" role="alert"></p>
+    </form>
+  </main>
+</div>
+
+<script>
+  const houses = {
+    braegorn: {
+      name: 'House of Braegorn',
+      desc: 'You are noble, courageous, and full of strength. You embody the golden spirit of honor and resilience.',
+      colorClass: 'house-braegorn',
+      colorHex: '#f6df7a'
+    },
+    glacien: {
+      name: 'House of Glacien',
+      desc: 'Calm, thoughtful, and driven by passion. Your fiery spirit shines through with warmth and determination.',
+      colorClass: 'house-glacien',
+      colorHex: '#f6df7a'
+    },
+    pyraeth: {
+      name: 'House of Pyraeth',
+      desc: 'Wise and serene, you navigate life with clarity and a cool head, aligned with the essence of the blue silver tides.',
+      colorClass: 'house-pyraeth',
+      colorHex: '#f6df7a'
+    },
+    valemont: {
+      name: 'House of Valemont',
+      desc: 'Grounded and strong-willed, your earthy nature and deep roots provide stability and profound insight.',
+      colorClass: 'house-valemont',
+      colorHex: '#f6df7a'
+    }
+  };
+
+  const questions = [
+    {
+      q: "What trait do you value the most?",
+      a: [
+        { text: "Bravery and strength", house: "braegorn" },
+        { text: "Passion and determination", house: "glacien" },
+        { text: "Wisdom and clarity", house: "pyraeth" },
+        { text: "Stability and insight", house: "valemont" }
+      ]
+    },
+    // ... (same 20 questions as before)
+    {
+      q: "Which environment feels most like home to you?",
+      a: [
+        { text: "A grand castle overlooking a vast kingdom", house: "braegorn" },
+        { text: "A warm hearth with lively conversations", house: "glacien" },
+        { text: "A tranquil lake surrounded by mountains", house: "pyraeth" },
+        { text: "A dense forest with ancient trees", house: "valemont" }
+      ]
+    },
+    {
+      q: "Choose a preferred weapon:",
+      a: [
+        { text: "Sword", house: "braegorn" },
+        { text: "Flaming bow", house: "glacien" },
+        { text: "Spear", house: "pyraeth" },
+        { text: "Axe", house: "valemont" }
+      ]
+    },
+    {
+      q: "Pick a color that draws you most:",
+      a: [
+        { text: "Gold", house: "braegorn" },
+        { text: "Orange", house: "glacien" },
+        { text: "Silver", house: "pyraeth" },
+        { text: "Brown", house: "valemont" }
+      ]
+    },
+    {
+      q: "What motivates your decisions?",
+      a: [
+        { text: "Honor and reputation", house: "braegorn" },
+        { text: "Desire to achieve and excel", house: "glacien" },
+        { text: "Seeking truth and knowledge", house: "pyraeth" },
+        { text: "Protecting your roots and family", house: "valemont" }
+      ]
+    },
+    {
+      q: "Your ideal pastime is:",
+      a: [
+        { text: "Training and physical challenges", house: "braegorn" },
+        { text: "Storytelling and social gatherings", house: "glacien" },
+        { text: "Meditation and learning", house: "pyraeth" },
+        { text: "Crafting and gardening", house: "valemont" }
+      ]
+    },
+    {
+      q: "How do you handle conflict?",
+      a: [
+        { text: "Face it head-on with courage", house: "braegorn" },
+        { text: "Use passion to persuade", house: "glacien" },
+        { text: "Stay calm and reason", house: "pyraeth" },
+        { text: "Stand firm and protect", house: "valemont" }
+      ]
+    },
+    {
+      q: "Pick an animal that represents you:",
+      a: [
+        { text: "Lion", house: "braegorn" },
+        { text: "Phoenix", house: "glacien" },
+        { text: "Owl", house: "pyraeth" },
+        { text: "Bear", house: "valemont" }
+      ]
+    },
+    {
+      q: "Your favorite season is:",
+      a: [
+        { text: "Summer", house: "braegorn" },
+        { text: "Autumn", house: "glacien" },
+        { text: "Winter", house: "pyraeth" },
+        { text: "Spring", house: "valemont" }
+      ]
+    },
+    {
+      q: "Which quality do people most admire in you?",
+      a: [
+        { text: "Leadership", house: "braegorn" },
+        { text: "Charisma", house: "glacien" },
+        { text: "Calmness", house: "pyraeth" },
+        { text: "Loyalty", house: "valemont" }
+      ]
+    },
+    {
+      q: "What sounds most appealing?",
+      a: [
+        { text: "Clashing swords", house: "braegorn" },
+        { text: "Crackling fire", house: "glacien" },
+        { text: "Flowing water", house: "pyraeth" },
+        { text: "Rustling leaves", house: "valemont" }
+      ]
+    },
+    {
+      q: "What drives your ambitions?",
+      a: [
+        { text: "Seeking glory", house: "braegorn" },
+        { text: "Helping others", house: "glacien" },
+        { text: "Discovering secrets", house: "pyraeth" },
+        { text: "Building legacy", house: "valemont" }
+      ]
+    },
+    {
+      q: "Your preferred style is:",
+      a: [
+        { text: "Regal and imposing", house: "braegorn" },
+        { text: "Warm and inviting", house: "glacien" },
+        { text: "Elegant and minimal", house: "pyraeth" },
+        { text: "Rugged and natural", house: "valemont" }
+      ]
+    },
+    {
+      q: "Choose a mythical power:",
+      a: [
+        { text: "Unbreakable strength", house: "braegorn" },
+        { text: "Fire manipulation", house: "glacien" },
+        { text: "Mind reading", house: "pyraeth" },
+        { text: "Earth control", house: "valemont" }
+      ]
+    },
+    {
+      q: "Which is closest to your philosophy?",
+      a: [
+        { text: "Win with honor", house: "braegorn" },
+        { text: "Burn bright and fierce", house: "glacien" },
+        { text: "Knowledge is power", house: "pyraeth" },
+        { text: "Strong roots, steady growth", house: "valemont" }
+      ]
+    },
+    {
+      q: "You get energized by:",
+      a: [
+        { text: "Challenging battles", house: "braegorn" },
+        { text: "Creative pursuits", house: "glacien" },
+        { text: "Studying mysteries", house: "pyraeth" },
+        { text: "Nature walks", house: "valemont" }
+      ]
+    },
+    {
+      q: "Best description of your spirit:",
+      a: [
+        { text: "Bold and shining", house: "braegorn" },
+        { text: "Fiery and passionate", house: "glacien" },
+        { text: "Calm and reflective", house: "pyraeth" },
+        { text: "Steady and steadfast", house: "valemont" }
+      ]
+    },
+    {
+      q: "Which motto speaks to you?",
+      a: [
+        { text: "\"Strength through unity\"", house: "braegorn" },
+        { text: "\"Rise from the ashes\"", house: "glacien" },
+        { text: "\"Seek and you'll find\"", house: "pyraeth" },
+        { text: "\"Rooted and resolute\"", house: "valemont" }
+      ]
+    },
+    {
+      q: "Choose a place you'd defend:",
+      a: [
+        { text: "Your throne room", house: "braegorn" },
+        { text: "The hearth and home", house: "glacien" },
+        { text: "Ancient library", house: "pyraeth" },
+        { text: "Sacred forest", house: "valemont" }
+      ]
+    },
+    {
+      q: "Your ideal leadership style:",
+      a: [
+        { text: "Command with strength", house: "braegorn" },
+        { text: "Inspire with passion", house: "glacien" },
+        { text: "Lead by wisdom", house: "pyraeth" },
+        { text: "Protect and nurture", house: "valemont" }
+      ]
+    }
+  ];
+
+  const step1Form = document.getElementById('form-step1');
+  const step2Form = document.getElementById('form-step2');
+  const step3Form = document.getElementById('form-step3');
+  const questionsList = document.getElementById('questions-list');
+  const step2NextBtn = document.getElementById('step2-next');
+  const step2PrevBtn = document.getElementById('step2-prev');
+  const restartBtn = document.getElementById('restart-btn');
+  const resultContainer = document.getElementById('result-container');
+  const progressBarFill = document.querySelector('.progress-bar-fill');
+  const progressBar = document.getElementById('progress-bar');
+  const submitMsg = document.getElementById('submit-msg');
+
+  let userData = {
+    name: '',
+    email: '',
+    date: '',
+    answers: []
+  };
+
+  function setTodayDate() {
+    const dateInput = step1Form.date;
+    const today = new Date().toISOString().substr(0, 10);
+    dateInput.value = today;
+  }
+
+  function renderQuestions() {
+    let html = '';
+    questions.forEach((qItem, qi) => {
+      html += `<section class="question" aria-labelledby="q${qi}-label">
+        <h3 id="q${qi}-label">${qi + 1}. ${qItem.q}</h3>
+        <div class="answers">`;
+      qItem.a.forEach((answer, ai) => {
+        const inputId = `q${qi}a${ai}`;
+        html += `
+          <input type="radio" id="${inputId}" name="q${qi}" value="${answer.house}" required />
+          <label for="${inputId}" tabindex="0">${answer.text}</label>
+        `;
+      });
+      html += `</div></section>`;
+    });
+    questionsList.innerHTML = html;
+  }
+
+  function validateQuestions() {
+    const allAnswered = questions.every((_, i) => {
+      return step2Form.querySelector(`input[name="q${i}"]:checked`) !== null;
+    });
+    step2NextBtn.disabled = !allAnswered;
+  }
+
+  function computeResults(answers) {
+    const scores = {
+      braegorn: 0,
+      glacien: 0,
+      pyraeth: 0,
+      valemont: 0
+    };
+    answers.forEach(house => {
+      if (scores.hasOwnProperty(house)) {
+        scores[house]++;
+      }
+    });
+    let maxScore = -1;
+    let chosenHouse = null;
+    for (const house in scores) {
+      if (scores[house] > maxScore) {
+        maxScore = scores[house];
+        chosenHouse = house;
+      }
+    }
+    return chosenHouse;
+  }
+
+  function displayResult(houseKey) {
+    const house = houses[houseKey];
+    if (!house) return;
+    progressBarFill.style.width = '100%';
+    progressBarFill.style.backgroundColor = house.colorHex;
+    progressBar.className = 'progress-bar';
+
+    resultContainer.className = `result-container ${house.colorClass}`;
+    resultContainer.innerHTML = `<div class="house-name">${house.name}</div>
+        <div class="house-desc">${house.desc}</div>`;
+
+    submitMsg.style.display = 'none';
+  }
+
+async function sendToGoogleSheet(data) {
+  try {
+    const response = await fetch('https://script.google.com/macros/s/AKfycbxLp19o3oEv_G9ZiyAJNIEbbfUAoJKfytdFFiUEQ-hDTN78FUJxDmt9Od-gBcRPMJh8sA/exec', {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+    if (response.ok) {
+      submitMsg.textContent = 'Your result has been recorded successfully!';
+      submitMsg.style.color = '#8ccb32';
+      submitMsg.style.display = 'block';
+    } else {
+      throw new Error('Failed to record result.');
+    }
+  } catch (error) {
+    submitMsg.textContent = 'Error recording result. Please try again later.';
+    submitMsg.style.color = '#c04444';
+    submitMsg.style.display = 'block';
+  }
+}
+
+  step1Form.addEventListener('submit', e => {
+    e.preventDefault();
+    userData.name = step1Form.name.value.trim();
+    userData.email = step1Form.email.value.trim();
+    userData.date = step1Form.date.value;
+    step1Form.classList.remove('active');
+    step2Form.classList.add('active');
+    userData.answers = new Array(questions.length).fill(null);
+    renderQuestions();
+    validateQuestions();
+    progressBarFill.style.width = '33%';
+  });
+
+  step2Form.addEventListener('change', e => {
+    const target = e.target;
+    if (target.name && target.name.startsWith('q')) {
+      const index = parseInt(target.name.substring(1));
+      userData.answers[index] = target.value;
+    }
+    validateQuestions();
+  });
+
+  step2Form.addEventListener('submit', e => {
+    e.preventDefault();
+    if (userData.answers.includes(null)) {
+      alert('Please answer all questions before submitting.');
+      return;
+    }
+    const selectedHouse = computeResults(userData.answers);
+    userData.house = selectedHouse;
+    displayResult(selectedHouse);
+    step2Form.classList.remove('active');
+    step3Form.classList.add('active');
+    progressBarFill.style.width = '100%';
+
+    sendToGoogleSheet({
+      name: userData.name,
+      email: userData.email,
+      date: userData.date,
+      house: houses[selectedHouse].name,
+      answers: userData.answers.join('; ')
+    });
+  });
+
+  step2PrevBtn.addEventListener('click', () => {
+    step2Form.classList.remove('active');
+    step1Form.classList.add('active');
+    progressBarFill.style.width = '0%';
+  });
+
+  window.addEventListener('DOMContentLoaded', () => {
+    setTodayDate();
+  });
+</script>
+</body>
+</html>
+
