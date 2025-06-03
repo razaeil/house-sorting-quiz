@@ -201,7 +201,7 @@
 <body>
 <div class="container" role="main" aria-label="House Sorting Quiz">
   <header>
-    Levisville Academy House Sorting Quiz
+    Levisville Academy <br> House Sorting Quiz
   </header>
   <main>
     <div id="progress-bar" class="progress-bar" aria-hidden="true">
@@ -210,11 +210,12 @@
 
     <!-- Step 1: User Information Form -->
     <form id="form-step1" class="active" aria-label="User information form">
+      <h1> Please provide the information correctly.</h1>
       <label for="name">Full Name *</label>
       <input id="name" name="name" type="text" placeholder="Your full name" required aria-required="true" />
 
       <label for="email">Email Address *</label>
-      <input id="email" name="email" type="email" placeholder="your@example.com" required aria-required="true" />
+      <input id="email" name="email" type="email" placeholder="your@gmail.com" required aria-required="true" />
 
       <label for="date">Date *</label>
       <input id="date" name="date" type="date" required aria-required="true" />
@@ -227,6 +228,7 @@
     <!-- Step 2: Questions Form -->
     <form id="form-step2" aria-label="House sorting questions form">
       <div class="questions-list" id="questions-list" aria-live="polite">
+        <p> Answer honestly. Your alignment will be determined by your values, not your intentions. Submit only once. Timestamp and identity are recorded.</p>
         <!-- Questions injected by JS -->
       </div>
       <div class="buttons">
@@ -302,17 +304,17 @@
       q: "Choose a preferred weapon:",
       a: [
         { text: "Sword", house: "braegorn" },
-        { text: "Flaming bow", house: "glacien" },
-        { text: "Spear", house: "pyraeth" },
+        { text: "Flaming bow", house: "pyraeth" },
+        { text: "Spear", house: "glacien" },
         { text: "Axe", house: "valemont" }
       ]
     },
     {
       q: "Pick a color that draws you most:",
       a: [
-        { text: "Gold", house: "braegorn" },
-        { text: "Orange", house: "glacien" },
-        { text: "Silver", house: "pyraeth" },
+        { text: "Gold", house: "glacien" },
+        { text: "Orange", house: "pyraeth" },
+        { text: "Silver", house: "braegorn" },
         { text: "Brown", house: "valemont" }
       ]
     },
@@ -346,18 +348,18 @@
     {
       q: "Pick an animal that represents you:",
       a: [
-        { text: "Lion", house: "braegorn" },
-        { text: "Phoenix", house: "glacien" },
-        { text: "Owl", house: "pyraeth" },
-        { text: "Bear", house: "valemont" }
+        { text: "Deer", house: "braegorn" },
+        { text: "Wolf", house: "glacien" },
+        { text: "Dragon", house: "pyraeth" },
+        { text: "Lion", house: "valemont" }
       ]
     },
     {
       q: "Your favorite season is:",
       a: [
-        { text: "Summer", house: "braegorn" },
-        { text: "Autumn", house: "glacien" },
-        { text: "Winter", house: "pyraeth" },
+        { text: "Summer", house: "pyraeth" },
+        { text: "Autumn", house: "braegorn" },
+        { text: "Winter", house: "glacien" },
         { text: "Spring", house: "valemont" }
       ]
     },
@@ -374,8 +376,8 @@
       q: "What sounds most appealing?",
       a: [
         { text: "Clashing swords", house: "braegorn" },
-        { text: "Crackling fire", house: "glacien" },
-        { text: "Flowing water", house: "pyraeth" },
+        { text: "Crackling fire", house: "pyraeth" },
+        { text: "Flowing water", house: "glacien" },
         { text: "Rustling leaves", house: "valemont" }
       ]
     },
